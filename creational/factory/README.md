@@ -15,6 +15,20 @@
 **DI 容器（Dependency Injection Container 依赖注入容器）**
 我们这里的实现比较粗糙，但是作为一个 demo 理解 di 容器也足够了，和 dig 相比还缺少很多东西，并且有许多的问题，例如 依赖关系，一种类型如果有多个 provider 如何处理等等等等。
 
+针对 DI 容器（di.go）：
+* 包级别的依赖注入（Dependency Injection）概念说明
+* Container 和 provider 结构体字段的详细解释
+* buildParam 核心算法的逐步解析
+* 说明如何通过反射分析构造函数
+* 容器如何管理对象的生命周期与缓存
+
+针对示例（example.go）：
+* 依赖链 A → B → C 的清晰说明
+* 构造函数如何与 DI 配合工作
+* 依赖注入过程的逐步演示
+* 使用依赖注入模式的好处
+* 现实类比（Controller → Service → Repository）
+
 ## 使用场景
 - 对象创建逻辑复杂
 - 需要根据配置创建不同对象

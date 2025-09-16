@@ -27,3 +27,7 @@ func NewIRuleConfigParser(t string) IRuleConfigParser {
 	}
 	return nil
 }
+
+func main() {
+	NewIRuleConfigParser("json")
+}

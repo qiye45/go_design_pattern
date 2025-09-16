@@ -49,3 +49,9 @@ func NewIRuleConfigParserFactory(t string) IRuleConfigParserFactory {
 	}
 	return nil
 }
+
+func main() {
+	// 通过简单工厂封装工厂方法
+	f := NewIRuleConfigParserFactory("json")
+	f.CreateParser().Parse(nil)
+}

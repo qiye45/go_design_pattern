@@ -70,3 +70,8 @@ func NewIConfigParserFactory(t string) IConfigParserFactory {
 	}
 	return nil
 }
+
+func main() {
+	NewIConfigParserFactory("json").CreateRuleParser().Parse([]byte(""))
+	NewIConfigParserFactory("yaml").CreateSystemParser().ParseSystem([]byte(""))
+}

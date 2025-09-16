@@ -1,4 +1,4 @@
-module go_design_pattern
+module github.com/qiye45/go_design_pattern
 
 go 1.24
 

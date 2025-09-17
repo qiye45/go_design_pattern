@@ -19,7 +19,7 @@
 - [原型模式 (Prototype)](./creational/prototype/) 不常用 ❌
 
 ### 结构型模式 (Structural Patterns)
-- [代理模式 (Proxy)](./structural/proxy/) ✅
+- [代理模式 (Proxy)](structural/proxy/) ✅
 - [桥接模式 (Bridge)](./structural/bridge/) ✅
 - [装饰器模式 (Decorator)](./structural/decorator/) ✅
 - [适配器模式 (Adapter)](./structural/adapter/) ✅

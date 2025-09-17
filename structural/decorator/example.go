@@ -1,54 +1,48 @@
-package decorator
+package main
 
 import "fmt"
 
-// 组件接口
+// Component 接口
 type Component interface {
-	Operation() string
+	Operation()
 }
 
-// 具体组件
+// ConcreteComponent 具体实现
 type ConcreteComponent struct{}
 
-func (c *ConcreteComponent) Operation() string {
-	return "ConcreteComponent"
-}
+func (c *ConcreteComponent) Operation() { fmt.Println("基础功能") }
 
-// 装饰器基类
-type BaseDecorator struct {
+// Decorator 装饰器基类
+type Decorator struct {
 	component Component
 }
 
-func (d *BaseDecorator) Operation() string {
-	return d.component.Operation()
-}
-
-// 具体装饰器A
-type ConcreteDecoratorA struct {
-	BaseDecorator
-}
-
-func NewDecoratorA(component Component) *ConcreteDecoratorA {
-	return &ConcreteDecoratorA{
-		BaseDecorator: BaseDecorator{component: component},
+func (d *Decorator) Operation() {
+	if d.component != nil {
+		d.component.Operation()
 	}
 }
 
-func (d *ConcreteDecoratorA) Operation() string {
-	return fmt.Sprintf("DecoratorA(%s)", d.BaseDecorator.Operation())
+// LogDecorator 具体装饰器1：加日志
+type LogDecorator struct{ Decorator }
+
+func (d *LogDecorator) Operation() {
+	fmt.Println("日志: 调用前")
+	d.Decorator.Operation()
+	fmt.Println("日志: 调用后")
 }
 
-// 具体装饰器B
-type ConcreteDecoratorB struct {
-	BaseDecorator
+// AuthDecorator 具体装饰器2：加权限
+type AuthDecorator struct{ Decorator }
+
+func (d *AuthDecorator) Operation() {
+	fmt.Println("权限检查")
+	d.Decorator.Operation()
 }
 
-func NewDecoratorB(component Component) *ConcreteDecoratorB {
-	return &ConcreteDecoratorB{
-		BaseDecorator: BaseDecorator{component: component},
-	}
-}
-
-func (d *ConcreteDecoratorB) Operation() string {
-	return fmt.Sprintf("DecoratorB(%s)", d.BaseDecorator.Operation())
+func main() {
+	base := &ConcreteComponent{}
+	withLog := &LogDecorator{Decorator{base}}
+	withAuth := &AuthDecorator{Decorator{withLog}}
+	withAuth.Operation()
 }

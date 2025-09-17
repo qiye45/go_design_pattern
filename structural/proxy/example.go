@@ -1,58 +1,31 @@
-package proxy
+package main
 
 import "fmt"
 
-//go:generate go run generate_proxy.go
-
-// 主题接口
-type Subject interface {
-	Request() string
+// Service 接口
+type Service interface {
+	DoSomething()
 }
 
-// 真实主题
-type RealSubject struct {
-	data string
+// RealService 真实对象
+type RealService struct{}
+
+func (r *RealService) DoSomething() {
+	fmt.Println("执行真正的业务逻辑")
 }
 
-func (r *RealSubject) Request() string {
-	return fmt.Sprintf("RealSubject: %s", r.data)
+// Proxy 代理对象
+type Proxy struct {
+	real *RealService
 }
 
-// 静态代理
-type StaticProxy struct {
-	realSubject *RealSubject
+func (p *Proxy) DoSomething() {
+	fmt.Println("代理：先检查权限")
+	p.real.DoSomething()
+	fmt.Println("代理：记录日志")
 }
 
-func NewStaticProxy(data string) *StaticProxy {
-	return &StaticProxy{
-		realSubject: &RealSubject{data: data},
-	}
-}
-
-func (p *StaticProxy) Request() string {
-	fmt.Println("Proxy: Pre-processing")
-	result := p.realSubject.Request()
-	fmt.Println("Proxy: Post-processing")
-	return result
-}
-
-// 缓存代理
-type CacheProxy struct {
-	realSubject *RealSubject
-	cache       string
-	cached      bool
-}
-
-func NewCacheProxy(data string) *CacheProxy {
-	return &CacheProxy{
-		realSubject: &RealSubject{data: data},
-	}
-}
-
-func (p *CacheProxy) Request() string {
-	if !p.cached {
-		p.cache = p.realSubject.Request()
-		p.cached = true
-	}
-	return p.cache
+func main() {
+	service := &Proxy{real: &RealService{}}
+	service.DoSomething()
 }

@@ -3,7 +3,7 @@ module github.com/qiye45/go_design_pattern
 go 1.24
 
 require (
-	github.com/mohuishou/go-design-pattern v1.0.0
+	github.com/google/go-cmp v0.7.0
 	github.com/stretchr/testify v1.11.1
 )
 

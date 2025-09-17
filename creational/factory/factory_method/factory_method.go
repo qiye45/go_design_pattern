@@ -1,57 +1,33 @@
-package factory_method
+package main
 
-type IRuleConfigParser interface {
-	Parse(data []byte)
-}
+import "fmt"
 
-type jsonRuleConfigParser struct {
-}
+// 产品接口
+type Parser interface{ Parse(data string) }
 
-func (J jsonRuleConfigParser) Parse(data []byte) {
-	panic("implement me")
-}
+// 工厂接口
+type Factory interface{ Create() Parser }
 
-type yamlRuleConfigParser struct {
-}
+// json实现
+type JsonParser struct{}
 
-func (Y yamlRuleConfigParser) Parse(data []byte) {
-	panic("implement me")
-}
+func (JsonParser) Parse(data string) { fmt.Println("json解析", data) }
 
-// IRuleConfigParserFactory 工厂方法接口
-type IRuleConfigParserFactory interface {
-	CreateParser() IRuleConfigParser
-}
+type JsonFactory struct{}
 
-// yamlRuleConfigParserFactory 工厂类
-type yamlRuleConfigParserFactory struct {
-}
+func (JsonFactory) Create() Parser { return JsonParser{} }
 
-func (y yamlRuleConfigParserFactory) CreateParser() IRuleConfigParser {
-	return yamlRuleConfigParser{}
-}
+// yaml实现
+type YamlParser struct{}
 
-// jsonRuleConfigParserFactory 工厂类
-type jsonRuleConfigParserFactory struct {
-}
+func (YamlParser) Parse(data string) { fmt.Println("yaml解析", data) }
 
-func (j jsonRuleConfigParserFactory) CreateParser() IRuleConfigParser {
-	return jsonRuleConfigParser{}
-}
+type YamlFactory struct{}
 
-// NewIRuleConfigParserFactory 用一个简单工厂封装工厂方法
-func NewIRuleConfigParserFactory(t string) IRuleConfigParserFactory {
-	switch t {
-	case "json":
-		return jsonRuleConfigParserFactory{}
-	case "yaml":
-		return yamlRuleConfigParserFactory{}
-	}
-	return nil
-}
+func (YamlFactory) Create() Parser { return YamlParser{} }
 
 func main() {
-	// 通过简单工厂封装工厂方法
-	f := NewIRuleConfigParserFactory("json")
-	f.CreateParser().Parse(nil)
+	var f Factory = JsonFactory{}
+	p := f.Create()
+	p.Parse(`{"a":1}`)
 }

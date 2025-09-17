@@ -1,33 +1,31 @@
-package simple_factory
+package main
 
-type IRuleConfigParser interface {
-	Parse(data []byte)
-}
+import "fmt"
 
-type jsonRuleConfigParser struct {
-}
+// 产品接口
+type Parser interface{ Parse(data string) }
 
-func (J jsonRuleConfigParser) Parse(data []byte) {
-	panic("implement me")
-}
+// 具体产品
+type JsonParser struct{}
 
-type yamlRuleConfigParser struct {
-}
+func (JsonParser) Parse(data string) { fmt.Println("json解析", data) }
 
-func (Y yamlRuleConfigParser) Parse(data []byte) {
-	panic("implement me")
-}
+type YamlParser struct{}
 
-func NewIRuleConfigParser(t string) IRuleConfigParser {
+func (YamlParser) Parse(data string) { fmt.Println("yaml解析", data) }
+
+// 简单工厂
+func NewParser(t string) Parser {
 	switch t {
 	case "json":
-		return jsonRuleConfigParser{}
+		return JsonParser{}
 	case "yaml":
-		return yamlRuleConfigParser{}
+		return YamlParser{}
 	}
 	return nil
 }
 
 func main() {
-	NewIRuleConfigParser("json")
+	p := NewParser("json")
+	p.Parse(`{"a":1}`)
 }

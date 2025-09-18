@@ -1,78 +1,55 @@
-package chain
+package main
 
 import "fmt"
 
-// 处理器接口
+// Handler Handler接口
 type Handler interface {
-	SetNext(Handler) Handler
-	Handle(request string) string
+	Handle(req int)
+	SetNext(h Handler)
 }
 
-// 基础处理器
-type BaseHandler struct {
-	next Handler
-}
+type Base struct{ next Handler }
 
-func (h *BaseHandler) SetNext(handler Handler) Handler {
-	h.next = handler
-	return handler
-}
-
-func (h *BaseHandler) Handle(request string) string {
-	if h.next != nil {
-		return h.next.Handle(request)
+func (b *Base) SetNext(h Handler) { b.next = h }
+func (b *Base) CallNext(req int) {
+	if b.next != nil {
+		b.next.Handle(req)
 	}
-	return ""
 }
 
-// 具体处理器A
-type ConcreteHandlerA struct {
-	BaseHandler
-}
+// Leader 具体处理器
+type Leader struct{ Base }
 
-func (h *ConcreteHandlerA) Handle(request string) string {
-	if request == "A" {
-		return "Handled by A"
+func (l *Leader) Handle(req int) {
+	if req <= 1 {
+		fmt.Println("Leader 批准")
+	} else {
+		l.CallNext(req)
 	}
-	return h.BaseHandler.Handle(request)
 }
 
-// 具体处理器B
-type ConcreteHandlerB struct {
-	BaseHandler
-}
+type Manager struct{ Base }
 
-func (h *ConcreteHandlerB) Handle(request string) string {
-	if request == "B" {
-		return "Handled by B"
+func (m *Manager) Handle(req int) {
+	if req <= 3 {
+		fmt.Println("Manager 批准")
+	} else {
+		m.CallNext(req)
 	}
-	return h.BaseHandler.Handle(request)
 }
 
-// 中间件示例
-type Middleware func(string) string
+type Boss struct{ Base }
 
-type MiddlewareChain struct {
-	middlewares []Middleware
+func (b *Boss) Handle(req int) {
+	fmt.Println("Boss 批准")
 }
 
-func (mc *MiddlewareChain) Use(middleware Middleware) {
-	mc.middlewares = append(mc.middlewares, middleware)
-}
+func main() {
+	leader, manager, boss := &Leader{}, &Manager{}, &Boss{}
+	leader.SetNext(manager)
+	manager.SetNext(boss)
 
-func (mc *MiddlewareChain) Execute(request string) string {
-	result := request
-	for _, middleware := range mc.middlewares {
-		result = middleware(result)
-	}
-	return result
-}
-
-func LoggingMiddleware(request string) string {
-	fmt.Printf("Logging: %s\n", request)
-	return request
-}
-
-func AuthMiddleware(request string) string {
-	return fmt.Sprintf("Auth(%s)", request)
+	leader.Handle(1) // 输出 Leader 批准
+	leader.Handle(2)
+	leader.Handle(4)
 }

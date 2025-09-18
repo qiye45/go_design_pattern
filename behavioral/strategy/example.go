@@ -1,65 +1,59 @@
-package strategy
+package main
 
-// 策略接口
-type Strategy interface {
-	Execute(a, b int) int
-}
+import "fmt"
 
-// 具体策略
-type AddStrategy struct{}
-
-func (s *AddStrategy) Execute(a, b int) int { return a + b }
-
-type SubtractStrategy struct{}
-
-func (s *SubtractStrategy) Execute(a, b int) int { return a - b }
-
-type MultiplyStrategy struct{}
-
-func (s *MultiplyStrategy) Execute(a, b int) int { return a * b }
-
-// 上下文
-type Context struct {
-	strategy Strategy
-}
-
-func (c *Context) SetStrategy(strategy Strategy) {
-	c.strategy = strategy
-}
-
-func (c *Context) ExecuteStrategy(a, b int) int {
-	return c.strategy.Execute(a, b)
-}
-
-// 支付策略示例
+// PaymentStrategy 支付策略接口
 type PaymentStrategy interface {
-	Pay(amount float64) string
+	Pay(amount float64)
 }
 
-type CreditCardPayment struct {
-	cardNumber string
+// Alipay 支付宝支付
+type Alipay struct{}
+
+func (a *Alipay) Pay(amount float64) {
+	fmt.Printf("Paying %.2f using Alipay.\n", amount)
 }
 
-func (p *CreditCardPayment) Pay(amount float64) string {
-	return "Paid with credit card"
+// WeChatPay 微信支付
+type WeChatPay struct{}
+
+func (w *WeChatPay) Pay(amount float64) {
+	fmt.Printf("Paying %.2f using WeChat Pay.\n", amount)
 }
 
-type PayPalPayment struct {
-	email string
+// CreditCardPay 信用卡支付
+type CreditCardPay struct{}
+
+func (c *CreditCardPay) Pay(amount float64) {
+	fmt.Printf("Paying %.2f using Credit Card.\n", amount)
 }
 
-func (p *PayPalPayment) Pay(amount float64) string {
-	return "Paid with PayPal"
-}
-
+// PaymentContext 上下文：支付上下文
 type PaymentContext struct {
-	strategy PaymentStrategy
+	Strategy PaymentStrategy
 }
 
-func (p *PaymentContext) SetPaymentStrategy(strategy PaymentStrategy) {
-	p.strategy = strategy
+func (p *PaymentContext) SetStrategy(strategy PaymentStrategy) {
+	p.Strategy = strategy
 }
 
-func (p *PaymentContext) Pay(amount float64) string {
-	return p.strategy.Pay(amount)
+func (p *PaymentContext) ExecutePayment(amount float64) {
+	p.Strategy.Pay(amount)
+}
+
+func main() {
+	// 创建支付上下文
+	context := &PaymentContext{}
+
+	// 用户选择支付宝支付
+	context.SetStrategy(&Alipay{})
+	context.ExecutePayment(100.0)
+
+	// 用户选择微信支付
+	context.SetStrategy(&WeChatPay{})
+	context.ExecutePayment(200.0)
+
+	// 用户选择信用卡支付
+	context.SetStrategy(&CreditCardPay{})
+	context.ExecutePayment(300.0)
 }
